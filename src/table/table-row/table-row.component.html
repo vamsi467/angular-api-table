@@ -1,0 +1,65 @@
+<td *ngIf="isCompositeAvailable" [ngClass]="{'border-bottom':!expanded && !row?.composite?.isError}"
+  style="width: 48px; max-width: 48px; " class="dds__td dds__body-2--smaller dds__d-flex">
+
+  <i (click)="expandRow()" *ngIf="expandable && !loading && !error" class="dds__icon  dds__button__icon--start" aria-hidden="true"
+    [ngClass]="expanded?'dds__icon--chevron-up':'dds__icon--chevron-down'"></i>
+    <div *ngIf="expandable && loading && !error"  class="dds__loading-indicator" >
+      <div class="dds__loading-indicator__spinner" style="max-width: 24px; max-height:24px;"></div>
+    </div>
+    <dds-popover *ngIf="expandable && !loading && error && !row?.composite?.isError">
+      <i class="dds__icon dds__icon--alert-error dds__mr-2" target></i>
+      <ul content>
+        Failed to load composite
+      </ul>
+    </dds-popover>
+
+</td>
+
+<ng-container *ngFor="let column of computedColumns; let columnIndex = index">
+  <td *ngIf="column.type ==='number' || column.type === 'string'" table-cell-styling number-string-table-cell
+    [column]="column" [details]="details" [class]="(expanded || row?.composite?.isError) ?'':'border-bottom'" [row]="row" [rowIndex]="rowIndex"
+    [tableOptions]="tableOptions" [style.paddingRight]="column.paddingRight ? column.paddingRight : null"
+    class="dds__td dds__body-2--smaller dds__d-flex">
+  </td>
+  <td [column]="column" table-cell-styling *ngIf="column.type ==='array'" [class]="(expanded || row?.composite?.isError) ?'':'border-bottom'"
+    class="dds__td dds__body-2--smaller dds__d-flex dds__align-items-center">
+    <dds-popover *ngIf="column.showErrorInfo && row?.error?.isError">
+      <i class="dds__icon dds__icon--alert-error dds__mr-2" target></i>
+      <ul content>
+          <li *ngFor="let message of row?.error?.messages">{{message}}</li>
+      </ul>
+  </dds-popover>
+    <div class="dds__d-flex dds__flex-column">
+      <span class="dds__tr__block dds__d-flex dds__flex-col"
+      *ngFor="let item of getArrayValue(row, column, true)">{{item}}</span>
+    </div>
+  </td>
+  <td [column]="column" table-cell-styling *ngIf="column.type ==='checkbox'" [class]="(expanded || row?.composite?.isError) ?'':'border-bottom'"
+    class="dds__td dds__body-2--smaller dds__d-flex dds__align-items-center">
+    <dds-popover *ngIf="column.showErrorInfo && row?.error?.isError">
+      <i class="dds__icon dds__icon--alert-error dds__mr-2" target></i>
+      <ul content>
+          <li *ngFor="let message of row?.error?.messages">{{message}}</li>
+      </ul>
+  </dds-popover>
+    <input (change)="onChange($event,row, column, rowIndex,columnIndex,'checkbox')" type="checkbox"
+      [checked]="getCheckBoxValue(row, column)"
+      [style.opacity]="getColumnValidationStatus(row, column)? (column.validationOptions?.opacity || 0.9):1"
+      [disabled]="getColumnValidationStatus(row, column)">
+  </td>
+  <td [column]="column" table-cell-styling *ngIf="column.type ==='radio'" [class]="(expanded || row?.composite?.isError) ?'':'border-bottom'"
+    class="dds__td dds__body-2--smaller dds__d-flex dds__align-items-center">
+    <input (change)="onChange($event,row, column, rowIndex,columnIndex,'radio')" type="radio"
+      [checked]="getCheckBoxValue(row, column)" [disabled]="getColumnValidationStatus(row, column)"
+      [style.opacity]="getColumnValidationStatus(row, column)? (column.validationOptions?.opacity || 0.9):1">
+  </td>
+  <td (change)=" onChangeSelectAndInput($event.event, row, column, rowIndex, columnIndex, $event.type, $event.oldValue)" class="dds__td dds__body-2--smaller dds__d-flex " input-table-cell [column]="column" table-cell-styling *ngIf="column.type ==='input'" [class]="(expanded || row?.composite?.isError) ?'':'border-bottom'" [row]="row" [rowIndex]="rowIndex"
+  [tableOptions]="tableOptions" [columnIndex]="columnIndex">
+    
+      
+  </td>
+  <td (change)=" onChangeSelectAndInput($event.event, row, column, rowIndex, columnIndex, $event.type,$event.oldValue)" select-table-cell [row]="row" [rowIndex]="rowIndex"
+  [tableOptions]="tableOptions" [columnIndex]="columnIndex" class="dds__td dds__body-2--smaller dds__d-flex " [column]="column" table-cell-styling *ngIf="column.type ==='select'" [class]="(expanded || row?.composite?.isError) ?'':'border-bottom'">
+    
+  </td>
+</ng-container>

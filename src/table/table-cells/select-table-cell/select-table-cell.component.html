@@ -1,0 +1,5 @@
+<select style="width: 100%;" [(ngModel)]="value" (change)="onChange($event,row, column, rowIndex,columnIndex,'select')">
+  <option *ngFor="let option of column?.selectOptions" [value]="getOptionValue( option)">
+    {{getOptionName( option)}}
+  </option>
+</select>

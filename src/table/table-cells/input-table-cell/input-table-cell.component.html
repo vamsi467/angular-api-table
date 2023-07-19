@@ -1,0 +1,12 @@
+<input style="width: 100%;"
+    *ngIf="!column?.formatterOptions || (column?.formatterOptions && column.formatterOptions.type!=='currency')"
+    (input)="onChange($event,row, column, rowIndex,columnIndex,'input')" (blur)="onBlur($event,row, column, rowIndex,columnIndex,'input')" class="dds__input-text dds__body-2--smaller"
+    type="text" [value]="value">
+<input style="width: 100%;" *ngIf="column?.formatterOptions && column.formatterOptions.type==='currency' && !focused" currency-input
+    [currency]="column?.formatterOptions.currency || tableOptions?.currency" (focus)="onFocus()" class="dds__input-text dds__body-2--smaller"
+    type="text" [value]="value">
+    <input style="width: 100%;" #normalInput *ngIf="column?.formatterOptions && column.formatterOptions.type==='currency' && focused" 
+    (input)="onChange($event,row, column, rowIndex,columnIndex,'input')" (blur)="onBlur($event,row, column, rowIndex,columnIndex,'input')" class="dds__input-text dds__body-2--smaller"
+    type="number" [value]="value">
+
+    

@@ -1,0 +1,15 @@
+<div [ngClass]="{'text-width': showPopover()}">{{ value }}</div>
+<div class="dds__d-flex">
+    <span *ngFor="let item of tags" class="dds__ml-2" [ngClass]="item.classes">
+        <span class="dds__badge__label">{{item.text}}</span>
+    </span>
+    <dds-badge-popover [badgeHeight]="'24px'"
+        *ngIf="showPopover()"
+        [badgeLabel]="details.count + ' Selected'" title="Additional Selection" class="dds__ml-2">
+    
+        <ul content>
+            <li class="dds__py-2" *ngFor="let option of details.defaultedOptions">{{option +' (Default)'}}</li>
+            <li class="dds__py-2" *ngFor="let option of details.includedOptions">{{option}}</li>
+        </ul>
+    </dds-badge-popover>
+</div>

@@ -1,0 +1,67 @@
+<ng-template #rowGroupTemplate>
+  <tr 
+    [ngClass]="{'dds__message-bar--error':error}"
+    [details]="details"
+    [loading]="loading || row.loading"
+    [error]="error || row.isError"
+    (expansion)="expandRow($event)"
+    [expandable]="expandable || row.expandable"
+    class="dds__tr"
+    table-row
+    [columns]="columns"
+    [row]="row"
+    [rowIndex]="rowIndex"
+    [tableOptions]="tableOptions"
+    [isCompositeAvailable]="isCompositeAvailable"
+    (change)="rowChange($event)">
+  </tr>
+  <tr *ngIf="row?.composite?.isError" class="row-composite-error border-bottom">
+    <td>
+      <ul class="dds__list dds__list--unstyled">
+        <li class="dds__message-bar dds__message-bar--{{row?.composite?.type}}">
+          <i class="dds__icon dds__message-bar__icon dds__icon--alert-{{row?.composite?.type}}"></i>
+          <div class="dds__message-bar__content" style="text-align: left" [innerHTML]="row?.composite?.messages?.[0]"></div>
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <ng-container *ngIf="expanded">
+    <ng-container *ngFor="let module of modules; last as isLastModule">
+      <ng-container *ngIf="hasIncludedOptions(module)">
+        <tr class="dds__tr">
+          <td class="dds__td" style="border-bottom: none;width: 48px; max-width: 48px;" *ngIf="isCompositeAvailable">
+          </td>
+          <td class="dds__td dds__accordion__title"
+            [ngStyle]="{width: !isCompositeRow ? '25%' : null,maxWidth: !isCompositeRow ? '25%' : null}">
+            {{ocUtils.getModuleTitle(module)}}</td>
+          <td class="dds__td dds__subtitle-2 dds__accordion__button" *ngIf="!isCompositeRow">
+            <h5>{{ocUtils.getModuleDescription(module.options)}}</h5>
+          </td>
+        </tr>
+        <!-- <tr class="dds__tr" *ngIf="!isEditMode && !hasIncludedOptions(module)">
+          <td class="dds__td" style="border-bottom: none;width: 48px; max-width: 48px;"></td>
+          <td class="dds__td">No options are included or defaulted </td>
+        </tr>
+        <tr class="dds__tr" *ngIf="!isEditMode && !module.options.length">
+          <td class="dds__td" style="border-bottom: none;width: 48px; max-width: 48px;"></td>
+          <td class="dds__td">No options are available for this module </td>
+        </tr> -->
+        <ng-container *ngFor="let option of module.options;last as isLastOption, let colIndex = index">
+
+          <tr 
+            *ngIf="isEditMode || option.extension?.isIncluded"
+            class="dds__tr child-row"
+            [class.dark-bottom-border]="isLastModule && isLastOption"
+            table-row
+            [columns]="columns"
+            [row]="option"
+            [rowIndex]="colIndex"
+            [tableOptions]="tableOptions"
+            [isCompositeAvailable]="isCompositeAvailable"
+            (change)="rowChange($event, module, true, row)"
+            [isSingleSelect]="module.extension?.isSingleSelect"></tr>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-template>

@@ -1,0 +1,29 @@
+.dds__td {
+    border-bottom: 1px solid var(--gray-800);
+}
+
+.child-row ::ng-deep td:first-child{
+    border-bottom: none !important;
+}
+.dark-bottom-border{
+    border-bottom: 1px solid var(--gray-800) !important;
+}
+
+.row-composite-error {
+    color: #590a0f;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.row-composite-error td {
+    width: 100%;
+}
+
+.row-composite-error td ul {
+    padding: 0;
+}
+
+.dds__message-bar--error {
+    color: #590a0f !important;
+    font-weight: 400;
+}

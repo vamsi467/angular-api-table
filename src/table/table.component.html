@@ -1,0 +1,83 @@
+<span class="dds__input-text__wrapper" *ngIf="tableOptions.filter?.enabled">
+  <input (input)="onSearchTextInput($event)" class="dds__search-input-text dds__body-2--smaller" type="search"
+    placeholder="Filter options">
+</span>
+<div style="overflow-y: auto;">
+  <table class="dds__table dds__table--compact dds__table--horizontal-alternating" style="width:100%">
+    <thead>
+      <tr class="dds__thead">
+        <th style="width: 48px; max-width: 48px;" class="dds__th dds__align-items-start" *ngIf="isCompositeAvailable">
+        </th>
+        <th *ngFor="let column of columns;let columnIndex = index" (click)="orderBy(column, columnIndex)"
+          [style.minWidth]="column.minWidth || column.width" [style.maxWidth]="column.width"
+          class="dds__th dds__d-flex dds__align-items-start" [style.fontWeight]="'500'">
+          <span [style.textAlign]="column.headerAlign || 'left'" class="dds__flex-grow-1">
+            {{column.text}}
+          </span>
+          <button *ngIf="column.sort" class="th__button dds__p-0" variant="tertiary" size="sm" dds-icon-button
+            [icon]="columnIndex===sortColumnIndex ? sortIconMap[sortDirection[0]]:'arrow-tri-solid-stacked'">
+          </button>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="dds__tr" *ngIf="!data.length">
+        <td *ngIf="getNoDataText()" [attr.colspan]="columns.length" class="dds__td dds__body-2--smaller dds__d-flex">
+          {{ getNoDataText() }}
+        </td>
+      </tr>
+      <ng-container *ngIf="!!optionGroupKeys?.length">
+        <ng-container *ngFor="let key of optionGroupKeys">
+          <tr class="dds__tr">
+            <td class="dds__td" style="border-bottom: none;width: 48px; max-width: 48px;" *ngIf="isCompositeAvailable">
+            </td>
+            <td class="dds__td dds__accordion__title border-bottom">
+              {{key}}
+              <span class="dds__ml-2 dds__badge dds__badge--md dds__badge--light dds__badge--brand">
+                <span class="dds__badge__label">
+                  {{groupedData[key]?.[0]?.optionGroupSelection}}
+                </span>
+              </span>
+            </td>
+          </tr>
+          <ng-container *ngFor="let row of groupedData[key]; let rowIndex = index">
+            <ng-container *ngIf="showOption(row)">
+              <tr [ngClass]="{'errorRow': row?.error?.isError}" (change)="setModuleChange($event)" table-row class="dds__tr"
+                [columns]="columns" [row]="row" [rowIndex]="rowIndex" [tableOptions]="tableOptions"
+                [isCompositeAvailable]="isCompositeAvailable">
+              </tr>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="!optionGroupKeys?.length">
+        <ng-container *ngFor="let row of data; let rowIndex = index">
+          <ng-container *ngIf="showOption(row)">
+            <tr (change)="setCompositeModuleChange($event)" *ngIf="isComposite(row);else notComposite"
+              [ngClass]="{'errorRow': row?.error?.isError}" [orderCodeId]="row.compositeId" [storeId]="storeId"
+              dds-table-row-group class="dds__tr" [columns]="columns" [row]="row" [rowIndex]="rowIndex"
+              [tableOptions]="tableOptions" [isCompositeAvailable]="isCompositeAvailable" [isCompositeRow]="true">
+            </tr>
+
+            <ng-template #notComposite>
+              <tr [ngClass]="{'errorRow': row?.error?.isError}" (change)="setModuleChange($event)" table-row class="dds__tr"
+                [columns]="columns" [row]="row" [rowIndex]="rowIndex" [tableOptions]="tableOptions"
+                [isCompositeAvailable]="isCompositeAvailable" [loading]="row.loading" [expandable]="row.expandable" [error]="row.isError">
+              </tr>
+            </ng-template>
+            <tr *ngIf="row?.composite?.isError" class="row-composite-error border-bottom">
+              <td>
+                <ul class="dds__list dds__list--unstyled">
+                  <li class="dds__message-bar dds__message-bar--{{row?.composite?.type}}">
+                    <i class="dds__icon dds__message-bar__icon dds__icon--alert-{{row?.composite?.type}}"></i>
+                    <div class="dds__message-bar__content" style="text-align: left" [innerHTML]="row?.composite?.messages?.[0]"></div>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </tbody>
+  </table>
+</div>
